@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(void) {
+    int n;
+
+    printf("Enter matrix size: ");
+    if (scanf_s("%d", &n) != 1 || n <= 0) {
+        printf("Invalid size!\n");
+        return 1;
+    }
+
+    // Выделяем память под матрицу
+    int** a = (int**)malloc(n * sizeof(int*));
+    if (a == NULL) {
+        printf("Memory allocation error!\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        a[i] = (int*)malloc(n * sizeof(int));
+        if (a[i] == NULL) {
+            printf("Memory allocation error!\n");
+            for (int j = 0; j < i; j++) free(a[j]);
+            free(a);
+            return 1;
+        }
+    }
+
+    srand((unsigned)time(NULL));
+
+    printf("\nArray %dx%d:\n", n, n);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            a[i][j] = -15 + rand() % 56;  // [-15; 40]
+            printf("%4d ", a[i][j]);
+        }
+        printf("\n");
+    }
+
+    int sum_above = 0, count_above = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {  // сразу идём выше диагонали
+            count_above++;
+            sum_above += a[i][j];
+        }
+    }
+
+    printf("\nAbove main diagonal:\n");
+    printf("  Count: %d\n", count_above);
+    printf("  Sum: %d\n", sum_above);
+
+    for (int i = 0; i < n; i++) free(a[i]);
+    free(a);
+
+    return 0;
+}

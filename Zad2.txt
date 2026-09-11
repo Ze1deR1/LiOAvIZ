@@ -1,0 +1,75 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_STR 20
+
+struct student {
+    char famil[MAX_STR];
+    char name[MAX_STR];
+    char facult[MAX_STR];
+    int Nomzach;
+};
+
+int main(void) {
+    int count;
+    printf("Enter number of records: ");
+    if (scanf("%d", &count) != 1 || count <= 0) {
+        printf("Invalid count!\n");
+        return 1;
+    }
+    while (getchar() != '\n');
+
+    struct student* stud = malloc(count * sizeof(struct student));
+    if (!stud) { printf("Memory allocation error!\n"); return 1; }
+
+    int actual = 0;
+    while (actual < count) {
+        printf("\nRecord %d (enter '#' as last name to finish):\n", actual + 1);
+
+        printf("  Last name: ");
+        if (scanf("%19s", stud[actual].famil) != 1) break;
+        if (stud[actual].famil[0] == '#') break;
+
+        printf("  Name: ");
+        scanf("%19s", stud[actual].name);
+
+        printf("  Faculty: ");
+        scanf("%19s", stud[actual].facult);
+
+        printf("  Gradebook number: ");
+        scanf("%d", &stud[actual].Nomzach);
+
+        actual++;
+    }
+
+    if (actual == 0) {
+        printf("No records entered.\n");
+        free(stud);
+        return 0;
+    }
+
+    char query[MAX_STR], numbuf[16];
+    printf("\nEnter search query: ");
+    scanf("%19s", query);
+
+    int found = 0;
+    for (int k = 0; k < actual; k++) {
+        snprintf(numbuf, sizeof(numbuf), "%d", stud[k].Nomzach);
+        if (strstr(stud[k].famil, query) ||
+            strstr(stud[k].name, query) ||
+            strstr(stud[k].facult, query) ||
+            strstr(numbuf, query)) {
+            printf("Found: %s %s, faculty %s, gradebook %d\n",
+                stud[k].famil, stud[k].name,
+                stud[k].facult, stud[k].Nomzach);
+            found = 1;
+        }
+    }
+
+    if (!found) printf("Nothing found for \"%s\".\n", query);
+
+    free(stud);
+    return 0;
+}
