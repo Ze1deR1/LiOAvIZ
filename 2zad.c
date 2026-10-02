@@ -9,95 +9,80 @@ struct Node {
     struct Node* right;
 };
 
-struct Node* root;
 
-struct Node* CreateTree(struct Node* root, struct Node* r, int data)
-{
-    if (r == NULL)
-    {
+struct Node* CreateTree(struct Node* r, int data) {
+    if (r == NULL) {
         r = (struct Node*)malloc(sizeof(struct Node));
-        if (r == NULL)
-        {
-            printf("Memory allocation error");
+        if (r == NULL) {
+            printf("Memory allocation error\n");
             exit(0);
         }
         r->left = NULL;
         r->right = NULL;
         r->data = data;
-        if (root == NULL) return r;
-
-        if (data > root->data) root->left = r;
-        else root->right = r;
         return r;
     }
 
-    if (data > r->data)
-        CreateTree(r, r->left, data);
-    else
-        CreateTree(r, r->right, data);
+    if (data < r->data) {
+        r->left = CreateTree(r->left, data);
+    }
+    else {
+        r->right = CreateTree(r->right, data);
+    }
 
-    return root;
+    return r;
 }
 
-void print_tree(struct Node* r, int l)
-{
+void print_tree(struct Node* r, int l) {
     if (r == NULL) return;
 
     print_tree(r->right, l + 1);
-    for (int i = 0; i < l; i++)
-    {
+    for (int i = 0; i < l; i++) {
         printf("    ");
     }
     printf("%d\n", r->data);
     print_tree(r->left, l + 1);
 }
 
-struct Node* FindNode(struct Node* r, int value)
-{
-    if (r == NULL)
-        return NULL;
-    if (value == r->data)
-        return r;
+struct Node* FindNode(struct Node* r, int value) {
+    if (r == NULL) return NULL;
+    if (value == r->data) return r;
+
     if (value < r->data)
         return FindNode(r->left, value);
     else
         return FindNode(r->right, value);
 }
 
-//подсчет повтор значений
-int CountOccurrences(struct Node* r, int value)
-{
-    if (r == NULL)
-        return 0;
+// Function to count occurrences of a specific value
+int CountOccurrences(struct Node* r, int value) {
+    if (r == NULL) return 0;
 
-    int count = 0;
-    if (r->data == value)
-        count = 1;
+    int count = (r->data == value) ? 1 : 0;
 
     return count + CountOccurrences(r->left, value)
         + CountOccurrences(r->right, value);
 }
 
-int main()
-{
+int main() {
     setlocale(LC_ALL, "");
     int D, start = 1;
+    struct Node* root = NULL; 
 
-    root = NULL;
     printf("-1 - finish building the tree\n");
-    while (start)
-    {
+    while (start) {
         printf("Enter a number: ");
-        scanf("%d", &D);
-        if (D == -1)
-        {
+        if (scanf("%d", &D) != 1) break;
+
+        if (D == -1) {
             printf("Tree building finished\n\n");
             start = 0;
         }
-        else
-            root = CreateTree(root, root, D);
+        else {
+            root = CreateTree(root, D); 
     }
 
+    printf("Tree structure (rotated 90 degrees counter-clockwise):\n");
     print_tree(root, 0);
 
     printf("\nEnter a value to search for: ");
@@ -109,7 +94,7 @@ int main()
     else
         printf("Value %d is not present in the tree\n", D);
 
-    //вызов подсчета
+    // Call the occurrence counter
     int count = CountOccurrences(root, D);
     printf("Value %d occurs in the tree %d time(s)\n", D, count);
 
