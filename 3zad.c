@@ -11,35 +11,37 @@ struct Node {
 
 struct Node* root;
 
-struct Node* CreateTree(struct Node* root, struct Node* r, int data)
+
+struct Node* CreateTree(struct Node* r, int data)
 {
+    // Если дошли до пустого места — создаем новый узел
     if (r == NULL)
     {
         r = (struct Node*)malloc(sizeof(struct Node));
         if (r == NULL)
         {
-            printf("Memory allocation error");
+            printf("Memory allocation error\n");
             exit(0);
         }
         r->left = NULL;
         r->right = NULL;
         r->data = data;
-        if (root == NULL) return r;
-
-        if (data < root->data) root->left = r;
-        else root->right = r;
         return r;
     }
 
+// Если элемент уже есть, ничего не добавляем (игнорируем дубликат)
     if (data == r->data)
-        return root;              /* duplicate - do not insert */
+    {
+        return r;
+    }
 
+    // Рекурсивный спуск с сохранением указателей на поддеревья
     if (data < r->data)
-        CreateTree(r, r->left, data);
+        r->left = CreateTree(r->left, data);
     else
-        CreateTree(r, r->right, data);
+        r->right = CreateTree(r->right, data);
 
-    return root;
+    return r;
 }
 
 void print_tree(struct Node* r, int l)
@@ -90,16 +92,18 @@ int main()
     while (start)
     {
         printf("Enter a number: ");
-        scanf("%d", &D);
+        if (scanf("%d", &D) != 1) break;
+
         if (D == -1)
         {
             printf("Tree building finished\n\n");
             start = 0;
         }
         else
-            root = CreateTree(root, root, D);
+            root = CreateTree(root, D); // Правильный вызов с перезаписью корня
     }
 
+    printf("Tree structure:\n");
     print_tree(root, 0);
 
     printf("\nEnter a value to search for: ");
