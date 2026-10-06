@@ -81,6 +81,7 @@ int main() {
         else {
             root = CreateTree(root, D); 
     }
+    }
 
     printf("Tree structure (rotated 90 degrees counter-clockwise):\n");
     print_tree(root, 0);
